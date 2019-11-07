@@ -1,4 +1,5 @@
 package org.academiadecodigo.thunderstructs.menu;
 
-public class InsertBudget {
+public class InsertBudget implements MenuOperation{
+
 }
