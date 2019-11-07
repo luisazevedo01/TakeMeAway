@@ -1,4 +1,9 @@
 package org.academiadecodigo.thunderstructs.menu;
 
-public class InsertLocation {
+public class InsertLocation implements MenuOperation {
+
+    @Override
+    public void execute() {
+
+    }
 }
