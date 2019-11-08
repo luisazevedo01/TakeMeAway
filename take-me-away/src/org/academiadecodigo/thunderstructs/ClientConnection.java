@@ -15,6 +15,7 @@ public class ClientConnection implements Runnable {
     private String name;
     private String request;
     private List<String> requests;
+    private PrintWriter out;
 
     public ClientConnection(Socket clientSocket, Server server, String name) {
 
@@ -33,6 +34,7 @@ public class ClientConnection implements Runnable {
             while (!clientSocket.isClosed()){
                 listen(in);
                 saveRequest();
+                send(request);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,7 +42,7 @@ public class ClientConnection implements Runnable {
     }
 
     private BufferedReader openStreams() throws IOException {
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        out = new PrintWriter(clientSocket.getOutputStream(), true);
         return new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
@@ -58,7 +60,12 @@ public class ClientConnection implements Runnable {
         System.out.println(requests);
     }
 
+    public void send(String message){
+        out.println(message);
+    }
+
     public String getName() {
+
         return name;
     }
 
