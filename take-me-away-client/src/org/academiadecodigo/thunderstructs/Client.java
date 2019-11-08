@@ -51,7 +51,7 @@ public class Client {
 
     private void writeRequest() throws IOException {
         out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(display.getMsg());
+        out.println(display.getClientName() + " : " + display.getMsg());
     }
 
 

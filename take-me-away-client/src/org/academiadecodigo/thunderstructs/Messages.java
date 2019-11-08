@@ -22,4 +22,5 @@ public class Messages {
     public static final String WAITING_FOR_RESPONSE = "We are analysing your information... ";
     public static final String STATUS_QUESTION = "Are you logging in as a tourist or a manager?";
     public static final String ADVISOR_CONFIRMATION = "Logged in as a Trip advisor, please wait for requests ...";
+    public static final String MISSING_INFORMATION = "You are missing some information...";
 }
