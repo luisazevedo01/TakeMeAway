@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-    private static final String CLIENT_NAME = "Client -";
+    private static final String TOURIST_NAME = "Tourist -";
     private ServerSocket ServerSocket;
     private ExecutorService service;
     private  List<ClientConnection> clients;
@@ -23,7 +23,7 @@ public class Server {
     }
 
     public void start(){
-        int connections = 0;
+        int connections = 1;
 
         while (true) {
             waitConnection(connections);
@@ -35,8 +35,9 @@ public class Server {
         try {
             Socket clientSocket = ServerSocket.accept();
 
-            ClientConnection connection = new ClientConnection(clientSocket, this, CLIENT_NAME + connections);
+            ClientConnection connection = new ClientConnection(clientSocket, this, TOURIST_NAME + connections);
             service.submit(connection);
+            System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Tourist: " + connections );
 
         } catch (IOException e) {
             System.err.println("Error establishing connection: " + e.getMessage());
