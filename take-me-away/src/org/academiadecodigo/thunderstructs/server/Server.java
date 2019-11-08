@@ -1,4 +1,4 @@
-package org.academiadecodigo.thunderstructs.Server;
+package org.academiadecodigo.thunderstructs.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,12 +12,12 @@ import java.util.concurrent.Executors;
 public class Server {
 
     private static final String CLIENT_NAME = "Client -";
-    private ServerSocket socket;
+    private ServerSocket ServerSocket;
     private ExecutorService service;
-    private final List<ClientConnection> clients;
+    private  List<ClientConnection> clients;
 
     public Server(int port) throws IOException {
-        socket = new ServerSocket(port);
+        ServerSocket = new ServerSocket(port);
         clients = Collections.synchronizedList(new LinkedList<>());
         service = Executors.newCachedThreadPool();
     }
@@ -33,7 +33,7 @@ public class Server {
 
     private void waitConnection(int connections) {
         try {
-            Socket clientSocket = socket.accept();
+            Socket clientSocket = ServerSocket.accept();
 
             ClientConnection connection = new ClientConnection(clientSocket, this, CLIENT_NAME + connections);
             service.submit(connection);

@@ -1,4 +1,4 @@
-package org.academiadecodigo.thunderstructs.Server;
+package org.academiadecodigo.thunderstructs.server;
 
 import java.net.Socket;
 

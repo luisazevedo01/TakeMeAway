@@ -1,8 +1,10 @@
-package org.academiadecodigo.thunderstructs.server;
+package org.academiadecodigo.thunderstructs;
+
+import org.academiadecodigo.thunderstructs.server.Server;
 
 import java.io.IOException;
 
-public class ServerLauncher {
+public class Launcher {
     private static final int port = 8080;
 
     public static void main(String[] args) {
