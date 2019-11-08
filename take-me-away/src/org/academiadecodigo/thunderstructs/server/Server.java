@@ -1,4 +1,4 @@
-package org.academiadecodigo.thunderstructs.server;
+package org.academiadecodigo.thunderstructs.Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
