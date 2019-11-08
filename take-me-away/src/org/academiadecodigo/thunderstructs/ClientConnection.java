@@ -46,6 +46,9 @@ public class ClientConnection implements Runnable {
 
     public void listen(BufferedReader in) throws IOException{
         request = in.readLine();
+        if(request == null){
+            return;
+        }
         System.out.println(request);
 
     }

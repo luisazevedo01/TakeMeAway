@@ -13,8 +13,10 @@ public class Server {
 
     private static final String TOURIST_NAME = "Tourist -";
     private ServerSocket ServerSocket;
+    private Socket clientSocket;
     private ExecutorService service;
-    private  List<ClientConnection> clients;
+    private List<ClientConnection> clients;
+    private boolean quit;
 
     public Server(int port) throws IOException {
         ServerSocket = new ServerSocket(port);
@@ -22,10 +24,9 @@ public class Server {
         service = Executors.newCachedThreadPool();
     }
 
-    public void start(){
+    public void start() {
         int connections = 1;
-
-        while (true) {
+        while (!quit) {
             waitConnection(connections);
             connections++;
 
@@ -33,17 +34,24 @@ public class Server {
         }
     }
 
-    private void waitConnection(int connections) {
+    private void serverBound() {
         try {
-            Socket clientSocket = ServerSocket.accept();
-
-            ClientConnection connection = new ClientConnection(clientSocket, this, TOURIST_NAME + connections);
-            service.submit(connection);
-            System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Tourist: " + connections );
-
+            clientSocket = ServerSocket.accept();
+            if(clientSocket.isClosed()){
+                quit = true;
+            }
         } catch (IOException e) {
             System.err.println("Error establishing connection: " + e.getMessage());
         }
+    }
+
+    private void waitConnection(int connections) {
+
+        serverBound();
+        ClientConnection connection = new ClientConnection(clientSocket, this, TOURIST_NAME + connections);
+        service.submit(connection);
+        System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Tourist: " + connections);
+
     }
 
 
