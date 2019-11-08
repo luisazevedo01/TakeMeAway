@@ -20,4 +20,6 @@ public class Messages {
     public static final String LocationQuestion = "Do like Coast or Interior? ";
     public static final String TAKEMEAWAY_OPTIONS = "Is this the right information?";
     public static final String WAITING_FOR_RESPONSE = "We are analysing your information... ";
+    public static final String STATUS_QUESTION = "Are you logging in as a tourist or a manager?";
+    public static final String ADVISOR_CONFIRMATION = "Logged in as a Trip advisor, please wait for requests ...";
 }

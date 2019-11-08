@@ -18,6 +18,7 @@ public class Display {
     private String location;
     private boolean quit;
     private int budget;
+    private int status;
 
 
     public Display() {
@@ -104,6 +105,16 @@ public class Display {
         System.out.println("Location: " + location);
 
     }
+
+    public void checkStatus(){
+        String[] options = {"Tourist" , "Trip Advisor"};
+        MenuInputScanner statusQuestion = new MenuInputScanner(options);
+        statusQuestion.setMessage(Messages.STATUS_QUESTION);
+
+        status = prompt.getUserInput(statusQuestion);
+
+    }
+
     private boolean finalCheck() {
         return (!((budget == 0) || (climate == null) || (location == null)));
     }
@@ -112,4 +123,7 @@ public class Display {
         return msg;
     }
 
+    public int getStatus() {
+        return status;
+    }
 }
