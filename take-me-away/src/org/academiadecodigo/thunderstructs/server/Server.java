@@ -1,8 +1,6 @@
 package org.academiadecodigo.thunderstructs.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collections;
@@ -13,48 +11,35 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-    private static final String TOURIST_NUMBER = "Tourist - ";
-    private ServerSocket socket;
+    private static final String CLIENT_NAME = "Client -";
+    private ServerSocket ServerSocket;
     private ExecutorService service;
-    private final List<ClientConnection> clients;
-    private ClientConnection connection;
+    private  List<ClientConnection> clients;
 
     public Server(int port) throws IOException {
-        socket = new ServerSocket(port);
+        ServerSocket = new ServerSocket(port);
         clients = Collections.synchronizedList(new LinkedList<>());
         service = Executors.newCachedThreadPool();
-
     }
 
-    public void start() {
-        int connections = 1;
+    public void start(){
+        int connections = 0;
 
         while (true) {
             waitConnection(connections);
             connections++;
-
-            // System.out.println(connections);
         }
     }
 
     private void waitConnection(int connections) {
         try {
-            Socket clientSocket = socket.accept();
+            Socket clientSocket = ServerSocket.accept();
 
-            connection = new ClientConnection(clientSocket, this, TOURIST_NUMBER + connections);
+            ClientConnection connection = new ClientConnection(clientSocket, this, CLIENT_NAME + connections);
             service.submit(connection);
-            clients.add(connection);
-            System.out.println("New connection: " + connection.getClientSocket() + "\n " + connection.getName() + " logged in");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            //System.out.println(clients);
-
 
         } catch (IOException e) {
             System.err.println("Error establishing connection: " + e.getMessage());
         }
     }
-
-
-
 }
