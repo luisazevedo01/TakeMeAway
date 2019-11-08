@@ -23,11 +23,13 @@ public class Server {
     }
 
     public void start(){
-        int connections = 0;
+        int connections = 1 ;
 
         while (true) {
             waitConnection(connections);
             connections++;
+
+
         }
     }
 
@@ -42,4 +44,6 @@ public class Server {
             System.err.println("Error establishing connection: " + e.getMessage());
         }
     }
+
+
 }
