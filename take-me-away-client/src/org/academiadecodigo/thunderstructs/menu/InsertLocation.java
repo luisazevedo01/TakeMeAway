@@ -15,6 +15,7 @@ public class InsertLocation implements MenuOperation {
 
         MenuInputScanner locationOption = new MenuInputScanner(options);
         locationOption.setMessage(Messages.LocationQuestion);
+
         int answer = prompt.getUserInput(locationOption);
         option = options[answer - 1];
 

@@ -5,18 +5,18 @@ import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
 import org.academiadecodigo.thunderstructs.Messages;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Display {
 
-    private InsertBudget insertBudget;
-    private InsertClimate insertClimate;
-    private InsertLocation insertLocation;
 
     private Prompt prompt;
-
+    private static String msg;
     private String clientName;
     private String climate;
     private String location;
-
+    private boolean quit;
     private int budget;
 
 
@@ -41,39 +41,27 @@ public class Display {
         MenuInputScanner menu = new MenuInputScanner(options);
         menu.setMessage(Messages.MENU_INTRO);
 
-        while (true) {
+        while (!quit) {
             int menuAnswer = prompt.getUserInput(menu);
             menuOptions(menuAnswer);
         }
+        System.out.println(Messages.WAITING_FOR_RESPONSE);
     }
 
     public void menuOptions(int menuAnswer) {
 
         switch (menuAnswer) {
             case 1:
-                insertBudget = new InsertBudget();
-                insertBudget.execute(prompt);
-                budget = insertBudget.getBudget();
-                System.out.println(budget);
+                budgetChoice();
                 break;
             case 2:
-                insertClimate = new InsertClimate();
-                insertClimate.execute(prompt);
-                climate = insertClimate.getOption();
-                System.out.println(climate);
+                climateChoice();
                 break;
             case 3:
-                insertLocation = new InsertLocation();
-                insertLocation.execute(prompt);
-                location = insertLocation.getOption();
-                System.out.println(location);
+                locationChoice();
                 break;
             case 4:
-                if (finalCheck()) {
-                    new TakeMeAway().execute(prompt);
-                } else {
-                    System.out.println("You are missing some information...");
-                }
+                takeMeAway();
                 break;
             default:
                 System.out.println(Messages.INVALID_OPTION);
@@ -82,19 +70,46 @@ public class Display {
 
     }
 
-    public boolean finalCheck() {
+    private void takeMeAway() {
+        if (finalCheck()) {
+            msg = budget + ", " + climate + ", " + location;
+            TakeMeAway takeMeAway = new TakeMeAway();
+            takeMeAway.execute(prompt);
+            quit = takeMeAway.checked();
+        } else {
+
+            System.out.println("You are missing some information...");
+        }
+    }
+    private void budgetChoice() {
+        InsertBudget insertBudget = new InsertBudget();
+        insertBudget.execute(prompt);
+        budget = insertBudget.getBudget();
+        System.out.println(budget + "$");
+
+    }
+
+    private void climateChoice() {
+        InsertClimate insertClimate = new InsertClimate();
+        insertClimate.execute(prompt);
+        climate = insertClimate.getOption();
+        System.out.println("Climate: " + climate);
+
+    }
+
+    private void locationChoice() {
+        InsertLocation insertLocation = new InsertLocation();
+        insertLocation.execute(prompt);
+        location = insertLocation.getOption();
+        System.out.println("Location: " + location);
+
+    }
+    private boolean finalCheck() {
         return (!((budget == 0) || (climate == null) || (location == null)));
     }
 
-    public int getBudget() {
-        return budget;
+    public static String getMsg() {
+        return msg;
     }
 
-    public String getClimate() {
-        return climate;
-    }
-
-    public String getLocation() {
-        return location;
-    }
 }

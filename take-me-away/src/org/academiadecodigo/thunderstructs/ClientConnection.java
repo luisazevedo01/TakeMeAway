@@ -1,4 +1,4 @@
-package org.academiadecodigo.thunderstructs.Server;
+package org.academiadecodigo.thunderstructs;
 
 import java.io.BufferedReader;
 import java.io.IOException;

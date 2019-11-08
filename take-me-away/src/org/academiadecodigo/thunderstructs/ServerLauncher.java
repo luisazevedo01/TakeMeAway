@@ -1,4 +1,4 @@
-package org.academiadecodigo.thunderstructs.server;
+package org.academiadecodigo.thunderstructs;
 
 import java.io.IOException;
 

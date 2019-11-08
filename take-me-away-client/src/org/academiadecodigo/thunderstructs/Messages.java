@@ -18,4 +18,6 @@ public class Messages {
     public static final String INVALID_BUDGET = "Not a valid budget!";
     public static final String CLIMATE_OPTIONS = "What is the climate that you are looking for?";
     public static final String LocationQuestion = "Do like Coast or Interior? ";
+    public static final String TAKEMEAWAY_OPTIONS = "Is this the right information?";
+    public static final String WAITING_FOR_RESPONSE = "We are analysing your information... ";
 }
