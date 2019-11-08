@@ -16,28 +16,19 @@ public class Client {
     private String hostName;
     private int portNumber;
     private Display display;
+    private PrintWriter out;
 
     public Client(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
         this.display = new Display();
+
     }
 
 
     public void start() {
-        setDisplay();
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new MultiThread());
-        try {
-            socket = new Socket(hostName, portNumber);
-            while(!socket.isClosed()){
-            write();
-            read();
-            }
-
-        } catch (IOException e) {
-            e.getMessage();
-        }
 
     }
 
@@ -45,27 +36,62 @@ public class Client {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         while (!socket.isClosed()) {
-            in.readLine();
+            String message = in.readLine();
+            System.out.println(message);
+
         }
 
     }
 
-    private void write() throws IOException {
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(display.getMsg());
+    private void informStatus() throws IOException {
+        out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(display.getStatus());
+
     }
 
-    public void setDisplay(){
+    private void writeRequest() throws IOException {
+        out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(display.getClientName() + " : " + display.getMsg());
+    }
+
+
+    public void setDisplay() {
+
         display.welcome();
-        display.startMenu();
+        display.checkStatus();
+        confirmUser();
 
     }
+
+    public void confirmUser() {
+        if (display.getStatus() == 1) {
+
+            display.startMenu();
+        } else {
+            System.out.println(Messages.ADVISOR_CONFIRMATION);
+        }
+    }
+
 
     private class MultiThread implements Runnable {
 
         @Override
         public void run() {
 
+            try {
+                socket = new Socket(hostName, portNumber);
+                while (!socket.isClosed()) {
+
+                    setDisplay();
+                    informStatus();
+                    writeRequest();
+                    read();
+                }
+
+            } catch (IOException e) {
+                e.getMessage();
+            }
         }
     }
+
 }

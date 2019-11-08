@@ -18,6 +18,7 @@ public class Display {
     private String location;
     private boolean quit;
     private int budget;
+    private int status;
 
 
     public Display() {
@@ -72,13 +73,13 @@ public class Display {
 
     private void takeMeAway() {
         if (finalCheck()) {
-            msg = budget + ", " + climate + ", " + location;
+            msg ="A budget of: " + budget + "$, A climate: " + climate + ", In: " + location;
             TakeMeAway takeMeAway = new TakeMeAway();
             takeMeAway.execute(prompt);
             quit = takeMeAway.checked();
         } else {
 
-            System.out.println("You are missing some information...");
+            System.out.println(Messages.MISSING_INFORMATION);
         }
     }
     private void budgetChoice() {
@@ -104,6 +105,16 @@ public class Display {
         System.out.println("Location: " + location);
 
     }
+
+    public void checkStatus(){
+        String[] options = {"Tourist" , "Trip Advisor"};
+        MenuInputScanner statusQuestion = new MenuInputScanner(options);
+        statusQuestion.setMessage(Messages.STATUS_QUESTION);
+
+        status = prompt.getUserInput(statusQuestion);
+
+    }
+
     private boolean finalCheck() {
         return (!((budget == 0) || (climate == null) || (location == null)));
     }
@@ -112,4 +123,11 @@ public class Display {
         return msg;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
 }
