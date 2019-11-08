@@ -1,6 +1,7 @@
 package org.academiadecodigo.thunderstructs;
 
 import org.academiadecodigo.thunderstructs.menu.Display;
+import org.academiadecodigo.thunderstructs.menu.ManagerResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class Client {
     private int portNumber;
     private Display display;
     private PrintWriter out;
+
 
     public Client(String hostName, int portNumber) {
         this.hostName = hostName;
@@ -35,12 +37,18 @@ public class Client {
     private void read() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        while (!socket.isClosed()) {
+
+        while (socket.isConnected()) {
             String message = in.readLine();
+
+            if (message == null) {
+                return;
+            }
+
             System.out.println(message);
 
         }
-
+        in.close();
     }
 
     private void informStatus() throws IOException {
@@ -55,7 +63,7 @@ public class Client {
     }
 
 
-    public void setDisplay() {
+    public void setDisplay() throws IOException {
 
         display.welcome();
         display.checkStatus();
@@ -63,14 +71,22 @@ public class Client {
 
     }
 
-    public void confirmUser() {
+    public void confirmUser() throws IOException {
         if (display.getStatus() == 1) {
-
             display.startMenu();
+
         } else {
+
             System.out.println(Messages.ADVISOR_CONFIRMATION);
+            //display.sendResponse();
+            //sendResponseStream();
         }
     }
+
+ /*   private void sendResponseStream() throws IOException {
+        out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(display.getResponse());
+    }*/
 
 
     private class MultiThread implements Runnable {
@@ -87,10 +103,14 @@ public class Client {
                     writeRequest();
                     read();
                 }
+                socket.close();
 
             } catch (IOException e) {
                 e.getMessage();
+            } finally {
+
             }
+
         }
     }
 
