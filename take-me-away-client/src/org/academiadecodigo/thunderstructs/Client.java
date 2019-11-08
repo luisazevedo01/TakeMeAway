@@ -29,19 +29,6 @@ public class Client {
     public void start() {
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new MultiThread());
-        try {
-            socket = new Socket(hostName, portNumber);
-            while (!socket.isClosed()) {
-
-                setDisplay();
-                informStatus();
-                writeRequest();
-                read();
-            }
-
-        } catch (IOException e) {
-            e.getMessage();
-        }
 
     }
 
@@ -49,12 +36,14 @@ public class Client {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         while (!socket.isClosed()) {
-            in.readLine();
+            String message = in.readLine();
+            System.out.println(message);
+
         }
 
     }
 
-    private void informStatus() throws IOException{
+    private void informStatus() throws IOException {
         out = new PrintWriter(socket.getOutputStream(), true);
         out.println(display.getStatus());
 
@@ -78,8 +67,7 @@ public class Client {
         if (display.getStatus() == 1) {
 
             display.startMenu();
-        }
-        else{
+        } else {
             System.out.println(Messages.ADVISOR_CONFIRMATION);
         }
     }
@@ -90,6 +78,19 @@ public class Client {
         @Override
         public void run() {
 
+            try {
+                socket = new Socket(hostName, portNumber);
+                while (!socket.isClosed()) {
+
+                    setDisplay();
+                    informStatus();
+                    writeRequest();
+                    read();
+                }
+
+            } catch (IOException e) {
+                e.getMessage();
+            }
         }
     }
 
