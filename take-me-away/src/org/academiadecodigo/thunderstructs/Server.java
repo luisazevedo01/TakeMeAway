@@ -15,12 +15,13 @@ public class Server {
     private ServerSocket ServerSocket;
     private Socket clientSocket;
     private ExecutorService service;
-    private List<ClientConnection> clients;
+
+    //private List<ClientConnection> clients;
     private boolean quit;
 
     public Server(int port) throws IOException {
         ServerSocket = new ServerSocket(port);
-        clients = Collections.synchronizedList(new LinkedList<>());
+        //clients = Collections.synchronizedList(new LinkedList<>());
         service = Executors.newCachedThreadPool();
     }
 
@@ -29,8 +30,6 @@ public class Server {
         while (!quit) {
             waitConnection(connections);
             connections++;
-
-
         }
     }
 
@@ -50,9 +49,8 @@ public class Server {
         serverBound();
         ClientConnection connection = new ClientConnection(clientSocket, this, TOURIST_NAME + connections);
         service.submit(connection);
-        System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Tourist: " + connections);
+        System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Connection: " + connections);
 
     }
-
 
 }

@@ -31,7 +31,7 @@ public class ClientConnection implements Runnable {
         try {
             BufferedReader in = openStreams();
 
-            while (!clientSocket.isClosed()){
+            while (!clientSocket.isClosed()) {
                 listen(in);
                 saveRequest();
                 send(request);
@@ -46,26 +46,34 @@ public class ClientConnection implements Runnable {
         return new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public void listen(BufferedReader in) throws IOException{
+    public void listen(BufferedReader in) throws IOException {
         request = in.readLine();
-        if(request == null){
+        if (request == null) {
             return;
         }
         System.out.println(request);
 
     }
 
-    public void saveRequest(){
-        requests.add(request);
-        System.out.println(requests);
+    public void saveRequest() {
+        analiseRequest();
+        //System.out.println(requests);
     }
 
-    public void send(String message){
-        out.println(message);
+    public void send(String message) {
+        //while (true) {
+            out.println(message);
+        //}
+    }
+
+    public void analiseRequest() {
+        String[] words = request.split("");
+        if (words[0].equals("1")) {
+            requests.add(request);
+        }
     }
 
     public String getName() {
-
         return name;
     }
 
