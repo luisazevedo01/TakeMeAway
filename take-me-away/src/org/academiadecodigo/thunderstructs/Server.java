@@ -15,6 +15,7 @@ public class Server {
     private ServerSocket ServerSocket;
     private Socket clientSocket;
     private ExecutorService service;
+    private LinkedList<String> requests;
 
     //private List<ClientConnection> clients;
     private boolean quit;
@@ -23,6 +24,8 @@ public class Server {
         ServerSocket = new ServerSocket(port);
         //clients = Collections.synchronizedList(new LinkedList<>());
         service = Executors.newCachedThreadPool();
+        requests = new LinkedList<>();
+
     }
 
     public void start() {
@@ -48,9 +51,13 @@ public class Server {
 
         serverBound();
         ClientConnection connection = new ClientConnection(clientSocket, this, TOURIST_NAME + connections);
+
         service.submit(connection);
         System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Connection: " + connections);
 
     }
 
+    public LinkedList<String> getRequests() {
+        return requests;
+    }
 }
