@@ -1,4 +1,4 @@
-package org.academiadecodigo.thunderstructs;
+package org.academiadecodigo.thunderstructs.menu;
 
 public class Messages {
 
