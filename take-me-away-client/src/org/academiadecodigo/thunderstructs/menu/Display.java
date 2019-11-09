@@ -3,10 +3,6 @@ package org.academiadecodigo.thunderstructs.menu;
 import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
-import org.academiadecodigo.thunderstructs.Messages;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class Display {
 
@@ -38,19 +34,19 @@ public class Display {
     }
 
 
-    public void startMenu() {
+    public void startClientMenu() {
         String[] options = new String[]{"Insert Budget", "Insert Climate", "Insert Location", "TakeMeAway"};
         MenuInputScanner menu = new MenuInputScanner(options);
         menu.setMessage(Messages.MENU_INTRO);
 
         while (!quit) {
             int menuAnswer = prompt.getUserInput(menu);
-            menuOptions(menuAnswer);
+            menuClientOptions(menuAnswer);
         }
         System.out.println(Messages.WAITING_FOR_RESPONSE);
     }
 
-    public void menuOptions(int menuAnswer) {
+    public void menuClientOptions(int menuAnswer) {
 
         switch (menuAnswer) {
             case 1:
@@ -71,6 +67,7 @@ public class Display {
         }
 
     }
+
 
     private void takeMeAway() {
         if (finalCheck()) {
@@ -143,5 +140,9 @@ public class Display {
 
     public String getResponse() {
         return response;
+    }
+
+    public Prompt getPrompt() {
+        return prompt;
     }
 }

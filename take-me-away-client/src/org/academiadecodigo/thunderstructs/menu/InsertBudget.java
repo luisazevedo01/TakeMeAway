@@ -2,7 +2,6 @@ package org.academiadecodigo.thunderstructs.menu;
 
 import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.scanners.integer.IntegerRangeInputScanner;
-import org.academiadecodigo.thunderstructs.Messages;
 
 public class InsertBudget implements MenuOperation {
 
