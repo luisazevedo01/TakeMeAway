@@ -9,35 +9,41 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-    private ServerSocket ServerSocket;
+    private ServerSocket serverSocket;
     private Socket clientSocket;
     private ExecutorService service;
+    private UserConnection userConnection;
+
     private LinkedList<String> requests;
-    private ClientConnection clientConnection;
+    private Map<Integer, Socket> clientConnections;
+    private Map<Integer, Socket> managerConnections;
 
     private boolean quit;
+    private int clientConnectionNumber;
+    private int managerConnectionNumber;
 
 
     public Server(int port) throws IOException {
 
-        ServerSocket = new ServerSocket(port);
+        serverSocket = new ServerSocket(port);
         service = Executors.newCachedThreadPool();
         requests = new LinkedList<>();
-
+        clientConnections = new HashMap<>();
+        managerConnections = new HashMap<>();
     }
 
     public void start() {
-        int connections = 1;
+
         while (!quit) {
-            waitConnection(connections);
-            connections++;
+            waitConnection();
         }
     }
 
     private void serverBound() {
+
         try {
-            clientSocket = ServerSocket.accept();
-            if(clientSocket.isClosed()){
+            clientSocket = serverSocket.accept();
+            if (clientSocket.isClosed()) {
                 quit = true;
             }
         } catch (IOException e) {
@@ -45,30 +51,29 @@ public class Server {
         }
     }
 
-    private void waitConnection(int connections) {
+    private void waitConnection() {
 
         serverBound();
-        clientConnection = new ClientConnection(clientSocket, this);
+        userConnection = new UserConnection(clientSocket, this);
 
-        service.submit(clientConnection);
+        service.submit(userConnection);
 
-        System.out.println("New connection: " + clientConnection.getClientSocket() + "\n" + "Connection: " + connections);
-
-        addTouristConnections();
     }
 
 
-    private void addTouristConnections(){
-        Map<String, Socket> clientConnections = new HashMap<>();
-        clientConnections.put(clientConnection.getName(), clientConnection.getClientSocket());
-        System.out.println(clientConnections.entrySet());
+    public void addConnections() {
 
-        for (String name : clientConnections.keySet()) {
-            if(name.equals(clientConnection.getName())){
-                clientConnection.send();
-            }
-
+        if (!(userConnection.getStatus().equals("Manager"))) {
+            clientConnectionNumber++;
+            System.out.println("New client connection: " + userConnection.getUserSocket() + "\n" + "Connection: " + clientConnectionNumber);
+            clientConnections.put(clientConnectionNumber, userConnection.getUserSocket());
+            System.out.println("Client connections: " + clientConnections.entrySet() + "\n");
+            return;
         }
+        managerConnectionNumber++;
+        System.out.println("New manager connection: " + userConnection.getUserSocket() + "\n" + "Connection: " + managerConnectionNumber);
+        managerConnections.put(managerConnectionNumber, userConnection.getUserSocket());
+        System.out.println("Manager connections :" + managerConnections.entrySet() + "\n");
     }
 
     public LinkedList<String> getRequests() {
