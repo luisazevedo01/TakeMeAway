@@ -83,6 +83,14 @@ public class Display {
             System.out.println(Messages.MISSING_INFORMATION);
         }
     }
+    public void checkStatus(){
+        String[] options = {"Tourist" , "Trip Advisor"};
+        MenuInputScanner statusQuestion = new MenuInputScanner(options);
+        statusQuestion.setMessage(Messages.STATUS_QUESTION);
+
+        status = prompt.getUserInput(statusQuestion);
+
+    }
     private void budgetChoice() {
         InsertBudget insertBudget = new InsertBudget();
         insertBudget.execute(prompt);
@@ -107,14 +115,6 @@ public class Display {
 
     }
 
-    public void checkStatus(){
-        String[] options = {"Tourist" , "Trip Advisor"};
-        MenuInputScanner statusQuestion = new MenuInputScanner(options);
-        statusQuestion.setMessage(Messages.STATUS_QUESTION);
-
-        status = prompt.getUserInput(statusQuestion);
-
-    }
 
     public void sendResponse(){
         ManagerResponse managerResponse = new ManagerResponse();

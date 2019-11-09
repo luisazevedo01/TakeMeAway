@@ -34,43 +34,19 @@ public class Client {
 
     }
 
-    private void read() throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-
-        while (socket.isConnected()) {
-            String message = in.readLine();
-
-            if (message == null) {
-                return;
-            }
-
-            System.out.println(message);
-
-        }
-        in.close();
-    }
-
-    private void informStatus() throws IOException {
-        out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(display.getStatus());
-
-    }
-
-    private void writeRequest() throws IOException {
-        out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(display.getClientName() + " : " + display.getMsg());
-    }
-
-
     public void setDisplay() throws IOException {
+
 
         display.welcome();
         display.checkStatus();
         confirmUser();
 
     }
+    private void informStatus() throws IOException {
+        out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(display.getStatus());
 
+    }
     public void confirmUser() throws IOException {
         if (display.getStatus() == 1) {
             display.startMenu();
@@ -83,10 +59,37 @@ public class Client {
         }
     }
 
- /*   private void sendResponseStream() throws IOException {
+    private void read() throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+
+        while (!socket.isClosed()) {
+            String message = in.readLine();
+
+            if (message == null) {
+                System.exit(0);
+                return;
+            }
+
+            System.out.println(message);
+
+        }
+        in.close();
+    }
+
+
+    private void writeRequest() throws IOException {
+        out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(display.getClientName() + " : " + display.getMsg());
+    }
+
+
+
+
+    private void sendResponseStream() throws IOException {
         out = new PrintWriter(socket.getOutputStream(), true);
         out.println(display.getResponse());
-    }*/
+    }
 
 
     private class MultiThread implements Runnable {
@@ -102,16 +105,17 @@ public class Client {
                     informStatus();
                     writeRequest();
                     read();
+
                 }
                 socket.close();
 
+
             } catch (IOException e) {
                 e.getMessage();
-            } finally {
-
             }
-
         }
     }
-
 }
+
+
+
