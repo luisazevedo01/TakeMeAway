@@ -14,12 +14,13 @@ public class ClientConnection implements Runnable {
     private Server server;
     private String name;
     private String request;
-    private List<String> requests;
+    //private List<String> requests;
     private PrintWriter out;
+    private String statusNumber;
 
     public ClientConnection(Socket clientSocket, Server server, String name) {
 
-        this.requests = new LinkedList<>();
+        //this.requests = new LinkedList<>();
         this.clientSocket = clientSocket;
         this.server = server;
         this.name = name;
@@ -32,9 +33,10 @@ public class ClientConnection implements Runnable {
             BufferedReader in = openStreams();
 
             while (!clientSocket.isClosed()) {
+
                 listen(in);
                 saveRequest();
-                send(request);
+                send();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,35 +49,42 @@ public class ClientConnection implements Runnable {
     }
 
     public void listen(BufferedReader in) throws IOException {
+        statusNumber = in.readLine();
         request = in.readLine();
+
+        if (statusNumber.equals("2")) {
+            System.out.println(statusNumber);
+            return;
+        }
         if (request == null) {
             return;
         }
+        System.out.println(statusNumber);
         System.out.println(request);
-
     }
+
 
     public void saveRequest() {
-        analiseRequest();
-        //System.out.println(requests);
+        if (request.split(" ")[2].equals("null")) {
+            return;
+        }
+        server.getRequests().add(request);
     }
 
-    public void send(String message) {
-        //while (true) {
-            out.println(message);
-        //}
-    }
+    public void send() {
+        while (clientSocket.isBound()) {
 
-    public void analiseRequest() {
-        String[] words = request.split("");
-        if (words[0].equals("1")) {
-            requests.add(request);
+            if(server.getRequests().isEmpty()){
+                return;
+            }
+
+            if (statusNumber.equals("2")) {
+                out.println(server.getRequests().getLast());
+                server.getRequests().removeLast();
+           }
         }
     }
 
-    public String getName() {
-        return name;
-    }
 
     public Socket getClientSocket() {
         return clientSocket;
