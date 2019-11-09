@@ -3,26 +3,24 @@ package org.academiadecodigo.thunderstructs;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
 
-    private static final String TOURIST_NAME = "Tourist -";
     private ServerSocket ServerSocket;
     private Socket clientSocket;
     private ExecutorService service;
     private LinkedList<String> requests;
+    private ClientConnection clientConnection;
 
-    //private List<ClientConnection> clients;
     private boolean quit;
 
+
     public Server(int port) throws IOException {
+
         ServerSocket = new ServerSocket(port);
-        //clients = Collections.synchronizedList(new LinkedList<>());
         service = Executors.newCachedThreadPool();
         requests = new LinkedList<>();
 
@@ -50,14 +48,32 @@ public class Server {
     private void waitConnection(int connections) {
 
         serverBound();
-        ClientConnection connection = new ClientConnection(clientSocket, this, TOURIST_NAME + connections);
+        clientConnection = new ClientConnection(clientSocket, this);
 
-        service.submit(connection);
-        System.out.println("New connection: " + connection.getClientSocket() + "\n" + "Connection: " + connections);
+        service.submit(clientConnection);
 
+        System.out.println("New connection: " + clientConnection.getClientSocket() + "\n" + "Connection: " + connections);
+
+        addTouristConnections();
+    }
+
+
+    private void addTouristConnections(){
+        Map<String, Socket> clientConnections = new HashMap<>();
+        clientConnections.put(clientConnection.getName(), clientConnection.getClientSocket());
+        System.out.println(clientConnections.entrySet());
+
+        for (String name : clientConnections.keySet()) {
+            if(name.equals(clientConnection.getName())){
+                clientConnection.send();
+            }
+
+        }
     }
 
     public LinkedList<String> getRequests() {
         return requests;
     }
+
 }
+

@@ -5,26 +5,27 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ClientConnection implements Runnable {
 
     private Socket clientSocket;
     private Server server;
-    private String name;
     private String request;
-    //private List<String> requests;
+
     private PrintWriter out;
     private String statusNumber;
 
-    public ClientConnection(Socket clientSocket, Server server, String name) {
+    public ClientConnection(Socket clientSocket, Server server) {
 
-        //this.requests = new LinkedList<>();
         this.clientSocket = clientSocket;
         this.server = server;
-        this.name = name;
+
     }
+
 
     @Override
     public void run() {
@@ -85,6 +86,11 @@ public class ClientConnection implements Runnable {
         }
     }
 
+    public String getName(){
+        String[] parts = request.split(":");
+        String namePart = parts[0];
+        return namePart;
+    }
 
     public Socket getClientSocket() {
         return clientSocket;
