@@ -19,6 +19,7 @@ public class Display {
     private boolean quit;
     private int budget;
     private int status;
+    private String response;
 
 
     public Display() {
@@ -115,6 +116,15 @@ public class Display {
 
     }
 
+    public void sendResponse(){
+        ManagerResponse managerResponse = new ManagerResponse();
+        managerResponse.execute(prompt);
+        response = managerResponse.getManagerResponse();
+
+    }
+
+
+
     private boolean finalCheck() {
         return (!((budget == 0) || (climate == null) || (location == null)));
     }
@@ -129,5 +139,9 @@ public class Display {
 
     public String getClientName() {
         return clientName;
+    }
+
+    public String getResponse() {
+        return response;
     }
 }
