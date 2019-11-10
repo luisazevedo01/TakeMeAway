@@ -15,7 +15,6 @@ public class Display {
     private boolean quit;
     private int budget;
     private int status;
-    private String response;
 
 
     public Display() {
@@ -113,12 +112,6 @@ public class Display {
     }
 
 
-    public void sendResponse(){
-        ManagerResponse managerResponse = new ManagerResponse();
-        managerResponse.execute(prompt);
-        response = managerResponse.getManagerResponse();
-
-    }
 
 
 
@@ -138,9 +131,6 @@ public class Display {
         return clientName;
     }
 
-    public String getResponse() {
-        return response;
-    }
 
     public Prompt getPrompt() {
         return prompt;
