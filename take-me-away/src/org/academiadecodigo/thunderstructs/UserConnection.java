@@ -13,7 +13,10 @@ public class UserConnection implements Runnable {
     private String request;
     private String status;
     private String response;
+    private String requestNumber;
     private PrintWriter out;
+    private BufferedReader in;
+    private boolean reload;
 
     public UserConnection(Socket userSocket, Server server) {
 
@@ -26,20 +29,25 @@ public class UserConnection implements Runnable {
     public void run() {
 
         try {
-            BufferedReader in = openStreams();
+            in = openStreams();
 
             while (!userSocket.isClosed()) {
 
                 listen(in);
                 saveTouristRequest();
                 server.addConnections();
-                sendTouristRequestToManager();
-                listenToManager(in);
-                broadcastFinalResponse();
+                interaction();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void interaction() throws IOException {
+        sendTouristRequestToManager();
+        listenToManager(in);
+        broadcastFinalResponse();
+
     }
 
     private BufferedReader openStreams() throws IOException {
@@ -48,7 +56,6 @@ public class UserConnection implements Runnable {
     }
 
     public void listen(BufferedReader in) throws IOException {
-
         request = in.readLine();
 
         if (request.split(" ")[0].equals("Client")) {
@@ -61,27 +68,28 @@ public class UserConnection implements Runnable {
 
 
     public void listenToManager(BufferedReader in) throws IOException {
+        requestNumber = in.readLine();
+        System.out.println(requestNumber);
         response = in.readLine();
-        System.out.println(response);
+        System.err.println(response);
     }
 
     public void broadcastFinalResponse() {
 
-        for (Socket socket : server.getConnections()) {
             try {
 
-                String clientKey = response.split("-")[0];
-                Socket key = server.getClientConnections().get(Integer.parseInt(clientKey));
+                String clientKey = requestNumber;
+                Socket targetSocket = server.getClientConnections().get(Integer.parseInt(clientKey));
 
-                if (socket.equals(key)) {
-                    out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println(response);
-                }
+                PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
+                out.println(response);
+
+                server.getRequests().remove((Integer.parseInt(requestNumber) - 1));
+                server.getClientConnections().remove(Integer.parseInt(clientKey));
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
     }
 
     public void saveTouristRequest() {
@@ -94,7 +102,7 @@ public class UserConnection implements Runnable {
     public void sendTouristRequestToManager() {
 
         int counter = 0;
-        while (userSocket.isBound() && counter < 5) {
+        while (userSocket.isBound() && counter < 10) {
 
             if (server.getRequests().isEmpty()) {
                 return;
