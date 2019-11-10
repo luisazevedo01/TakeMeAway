@@ -104,18 +104,15 @@ public class UserConnection implements Runnable {
 
                 int req = server.getRequests().size();
 
-                if (req <= 5) {
+                if (req <= 10) {
 
                     for (int i = 0; i < req; i++) {
 
                         out.println(server.getRequests().get(i));
                         counter++;
-                        if (counter == 4) {
-                            return;
-                        }
 
                     }
-                    int remain = 5 - req;
+                    int remain = 10 - req;
 
                     for (int i = 0; i < remain; i++) {
                         out.println(" ");
