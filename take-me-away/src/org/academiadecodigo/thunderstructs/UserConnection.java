@@ -12,7 +12,7 @@ public class UserConnection implements Runnable {
     private Server server;
     private String request;
     private String status;
-
+    private String response;
     private PrintWriter out;
 
     public UserConnection(Socket userSocket, Server server) {
@@ -34,6 +34,7 @@ public class UserConnection implements Runnable {
                 saveTouristRequest();
                 server.addConnections();
                 sendTouristRequestToManager();
+                listenToManager(in);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,6 +60,11 @@ public class UserConnection implements Runnable {
     }
 
 
+    public void listenToManager(BufferedReader in) throws IOException {
+        response = in.readLine();
+        System.out.println(response);
+    }
+
     public void saveTouristRequest() {
 
         if (request.split(" ")[0].equals("Client")) {
@@ -81,30 +87,29 @@ public class UserConnection implements Runnable {
 
             if (status.equals("Manager")) {
 
-                    int req = server.getRequests().size();
+                int req = server.getRequests().size();
 
-                    if(req <= 5){
+                if (req <= 5) {
 
-                        for (int i = 0; i < req; i++) {
+                    for (int i = 0; i < req; i++) {
 
-                            out.println(server.getRequests().get(i));
-                            counter++;
-                            if(counter == 4){
-                                return;
-                            }
-
+                        out.println(server.getRequests().get(i));
+                        counter++;
+                        if (counter == 4) {
+                            return;
                         }
-                        int remain = 5 - req;
 
-                        for(int i = 0; i < remain; i++){
-                            out.println(" ");
-                        }
                     }
+                    int remain = 5 - req;
 
+                    for (int i = 0; i < remain; i++) {
+                        out.println(" ");
+                    }
                 }
+
             }
         }
-
+    }
 
 
     public Socket getUserSocket() {
