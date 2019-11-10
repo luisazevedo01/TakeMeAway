@@ -17,6 +17,7 @@ public class Server {
     private LinkedList<String> requests;
     private Map<Integer, Socket> clientConnections;
     private Map<Integer, Socket> managerConnections;
+    private List<Socket> connections;
 
     private boolean quit;
     private int clientConnectionNumber;
@@ -30,6 +31,8 @@ public class Server {
         requests = new LinkedList<>();
         clientConnections = new HashMap<>();
         managerConnections = new HashMap<>();
+        connections = Collections.synchronizedList(new LinkedList<>());
+
     }
 
     public void start() {
@@ -67,6 +70,7 @@ public class Server {
             clientConnectionNumber++;
             System.out.println("New client connection: " + userConnection.getUserSocket() + "\n" + "Connection: " + clientConnectionNumber);
             clientConnections.put(clientConnectionNumber, userConnection.getUserSocket());
+            connections.add(userConnection.getUserSocket());
             System.out.println("Client connections: " + clientConnections.entrySet() + "\n");
             return;
         }
@@ -80,5 +84,12 @@ public class Server {
         return requests;
     }
 
+    public List<Socket> getConnections() {
+        return connections;
+    }
+
+    public Map<Integer, Socket> getClientConnections() {
+        return clientConnections;
+    }
 }
 

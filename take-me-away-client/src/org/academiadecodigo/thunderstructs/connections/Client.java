@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 
 public class Client extends User {
 
+    private BufferedReader in;
+
     private Display display;
     public Client(String hostName, int portNumber) {
         super(hostName, portNumber);
@@ -34,21 +36,21 @@ public class Client extends User {
 
     @Override
     protected void read() throws IOException {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 
-            while (!socket.isClosed()) {
+        //while (!socket.isClosed()) {
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 message = in.readLine();
 
-                if (message == null) {
+                /*if (message == null) {
                     System.exit(0);
                     return;
-                }
+                }*/
 
                 System.out.println(message);
 
-            }
-            in.close();
+           // }
+            //in.close();
     }
 
     private class MultiThread implements Runnable {
@@ -64,7 +66,7 @@ public class Client extends User {
                     read();
 
                 }
-                socket.close();
+                //socket.close();
 
 
             } catch (IOException e) {
