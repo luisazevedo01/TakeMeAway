@@ -35,6 +35,7 @@ public class UserConnection implements Runnable {
                 server.addConnections();
                 sendTouristRequestToManager();
                 listenToManager(in);
+                broadcastFinalResponse();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +47,6 @@ public class UserConnection implements Runnable {
         return new BufferedReader(new InputStreamReader(userSocket.getInputStream()));
     }
 
-    //listens incoming messages from the tourist and manager. Criar dois métodos diferentes?
     public void listen(BufferedReader in) throws IOException {
 
         request = in.readLine();
@@ -65,19 +65,34 @@ public class UserConnection implements Runnable {
         System.out.println(response);
     }
 
+    public void broadcastFinalResponse() {
+
+        for (Socket socket : server.getConnections()) {
+            try {
+
+                String clientKey = response.split("-")[0];
+                Socket key = server.getClientConnections().get(Integer.parseInt(clientKey));
+
+                if (socket.equals(key)) {
+                    out = new PrintWriter(socket.getOutputStream(), true);
+                    out.println(response);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void saveTouristRequest() {
 
         if (request.split(" ")[0].equals("Client")) {
             server.getRequests().add(request);
         }
-
-       /* for (String s : server.getRequests()) {
-            System.out.println(s);
-        }*/
     }
 
     public void sendTouristRequestToManager() {
-        //server.getRequests().add(null);
+
         int counter = 0;
         while (userSocket.isBound() && counter < 5) {
 
