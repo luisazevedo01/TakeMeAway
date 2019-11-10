@@ -3,7 +3,6 @@ package org.academiadecodigo.thunderstructs.menu;
 import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
-import org.academiadecodigo.thunderstructs.Messages;
 
 public class Display {
 
