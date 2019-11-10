@@ -14,6 +14,7 @@ public class UserFactory {
         this.display = new Display();
         this.hostName = hostName;
         this.portNumber = porNumber;
+
     }
 
     public void setDisplay() {
@@ -30,6 +31,7 @@ public class UserFactory {
             return new Client(hostName, portNumber);
 
         } else {
+
             System.out.println(Messages.ADVISOR_CONFIRMATION);
             return new Manager(hostName, portNumber);
 

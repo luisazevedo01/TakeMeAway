@@ -43,7 +43,7 @@ public class Manager extends User {
         executor.submit(new MultiThread());
     }
 
-    public void startManagerMenu() {
+    public void startManagerMenu() throws IOException {
         MenuInputScanner requestMenu = new MenuInputScanner(options);
         requestMenu.setMessage("Choose a request to answer:");
         choosenResquest = prompt.getUserInput(requestMenu);
@@ -64,17 +64,16 @@ public class Manager extends User {
         String msg;
         int counter = 0;
 
-        while (counter < 6 && ((msg = in.readLine()) != null)) {
-
-            options[counter] = msg;
+        while (counter < 5 && socket.isBound()) {
+            message = in.readLine();
+            options[counter] = message;
             counter++;
+            System.out.println(message);
 
-            if (counter == 2) {
-                startManagerMenu();
-                sendResponse();
 
-            }
         }
+            startManagerMenu();
+            sendResponse();
         in.close();
     }
 
@@ -84,8 +83,8 @@ public class Manager extends User {
         public void run() {
             try {
                 socket = new Socket(hostName, portNumber);
-                while (!socket.isClosed()) {
                     writeRequest();
+                while (!socket.isClosed()) {
                     read();
 
                 }
