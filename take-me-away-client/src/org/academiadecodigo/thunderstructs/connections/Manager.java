@@ -16,16 +16,13 @@ import java.util.concurrent.Executors;
 public class Manager extends User {
     private Prompt prompt;
     private String[] options;
-    private int choosenResquest;
-    private Display display;
     private String response;
 
 
     public Manager(String hostName, int portNumber) {
         super(hostName, portNumber);
-        display = new Display();
         prompt = new Prompt(System.in, System.out);
-        options = new String[5];
+        options = new String[10];
         start();
     }
 
@@ -43,10 +40,10 @@ public class Manager extends User {
         executor.submit(new MultiThread());
     }
 
-    public void startManagerMenu() throws IOException {
+    public void startManagerMenu() {
         MenuInputScanner requestMenu = new MenuInputScanner(options);
         requestMenu.setMessage("Choose a request to answer:");
-        choosenResquest = prompt.getUserInput(requestMenu);
+        prompt.getUserInput(requestMenu);
 
     }
 
@@ -64,7 +61,7 @@ public class Manager extends User {
         String msg;
         int counter = 0;
 
-        while (counter < 5 && socket.isBound()) {
+        while (counter < 10 && socket.isBound()) {
             message = in.readLine();
             options[counter] = message;
             counter++;
