@@ -25,16 +25,17 @@ public class Display {
     public void welcome() {
 
         System.out.println(Messages.WELCOME);
+        System.out.println(Messages.BAR);
         StringInputScanner name = new StringInputScanner();
         name.setMessage(Messages.INTRODUCTION);
         clientName = prompt.getUserInput(name);
 
-        System.out.println(Messages.WELCOME_MSG + clientName);
+        System.out.println(Messages.WELCOME_MSG + clientName + "!");
     }
 
 
     public void startClientMenu() {
-        String[] options = new String[]{"Insert Budget", "Insert Climate", "Insert Location", "TakeMeAway"};
+        String[] options = new String[]{Messages.INSERT_BUDGET, Messages.INSERT_CLIMATE, Messages.INSERT_LOCATION, Messages.INSERT_TAKEMEAWAY};
         MenuInputScanner menu = new MenuInputScanner(options);
         menu.setMessage(Messages.MENU_INTRO);
 
@@ -70,7 +71,7 @@ public class Display {
 
     private void takeMeAway() {
         if (finalCheck()) {
-            msg ="A budget of: " + budget + "$, A climate: " + climate + ", In: " + location;
+            msg ="A budget of: " + budget + "$, A climate: " + climate + ", In: " + location + Messages.INFORMATION_CONFIRM;
             TakeMeAway takeMeAway = new TakeMeAway();
             takeMeAway.execute(prompt);
             quit = takeMeAway.checked();
@@ -123,8 +124,11 @@ public class Display {
         return msg;
     }
 
-    public int getStatus() {
-        return status;
+    public boolean getStatus() {
+        if(status == 1){
+        return true;
+        }
+        return false;
     }
 
     public String getClientName() {
