@@ -18,6 +18,7 @@ public class Manager extends User {
     private String[] options;
     private int choosenResquest;
     private Display display;
+    private String response;
 
 
     public Manager(String hostName, int portNumber) {
@@ -28,9 +29,12 @@ public class Manager extends User {
         start();
     }
 
-    private void sendResponseStream() throws IOException {
+    private void sendResponse() throws IOException {
+        ManagerResponse managerResponse = new ManagerResponse();
+        managerResponse.execute(prompt);
+        response = managerResponse.getManagerResponse();
         out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(display.getResponse());
+        out.println(response);
     }
 
     @Override
@@ -39,7 +43,7 @@ public class Manager extends User {
         executor.submit(new MultiThread());
     }
 
-    public void startManagerMenu() throws IOException{
+    public void startManagerMenu() throws IOException {
         MenuInputScanner requestMenu = new MenuInputScanner(options);
         requestMenu.setMessage("Choose a request to answer:");
         choosenResquest = prompt.getUserInput(requestMenu);
@@ -60,36 +64,16 @@ public class Manager extends User {
         String msg;
         int counter = 0;
 
-/*        while (counter < 6) {
-            System.out.println("ESTOU NO LOOP");
-            if ((msg = in.readLine()) != null) {
-                System.out.println("ENTREI NO IF");
-
-                message = msg;
-                System.out.println("LI OUTRA LINHA");
-
-                if (message == null) {
-                    System.exit(0);
-                    return;
-                }
-
-                options[counter] = message;
-                counter++;
-                continue;
-            }
-            System.out.println(message);
-            startManagerMenu();
-        }*/
-        while (counter < 6 && ((msg = in.readLine()) != null)) {
-
-            options[counter] = msg;
+        while (counter < 5 && socket.isBound()) {
+            message = in.readLine();
+            options[counter] = message;
             counter++;
+            System.out.println(message);
 
-            if (counter == 2) {
-                startManagerMenu();
 
-            }
         }
+            startManagerMenu();
+            sendResponse();
         in.close();
     }
 
@@ -99,8 +83,8 @@ public class Manager extends User {
         public void run() {
             try {
                 socket = new Socket(hostName, portNumber);
-                while (!socket.isClosed()) {
                     writeRequest();
+                while (!socket.isClosed()) {
                     read();
 
                 }
