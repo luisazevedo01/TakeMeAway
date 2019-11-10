@@ -73,17 +73,38 @@ public class UserConnection implements Runnable {
     public void sendTouristRequestToManager() {
         //server.getRequests().add(null);
         int counter = 0;
-        while (userSocket.isBound()) {
+        while (userSocket.isBound() && counter < 5) {
 
             if (server.getRequests().isEmpty()) {
                 return;
             }
+
             if (status.equals("Manager")) {
-                out.println(server.getRequests().get(counter));
-                counter++;
+
+                    int req = server.getRequests().size();
+
+                    if(req <= 5){
+
+                        for (int i = 0; i < req; i++) {
+
+                            out.println(server.getRequests().get(i));
+                            counter++;
+                            if(counter == 4){
+                                return;
+                            }
+
+                        }
+                        int remain = 5 - req;
+
+                        for(int i = 0; i < remain; i++){
+                            out.println(" ");
+                        }
+                    }
+
+                }
             }
         }
-    }
+
 
 
     public Socket getUserSocket() {
