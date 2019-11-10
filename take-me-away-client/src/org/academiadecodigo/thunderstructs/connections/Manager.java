@@ -68,7 +68,6 @@ public class Manager extends User {
             message = in.readLine();
             options[counter] = message;
             counter++;
-            System.out.println(message);
 
 
         }

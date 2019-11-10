@@ -9,7 +9,7 @@ public class InsertClimate implements MenuOperation {
 
     @Override
     public void execute(Prompt prompt) {
-        String[] options = new String[]{"HOT", "COLD"};
+        String[] options = new String[]{Messages.INSERT_HOT, Messages.INSERT_COLD};
 
         MenuInputScanner menu = new MenuInputScanner(options);
         menu.setMessage(Messages.CLIMATE_OPTIONS);
