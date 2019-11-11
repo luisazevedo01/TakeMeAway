@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,6 +18,8 @@ public class Manager extends User {
     private Prompt prompt;
     private String[] options;
     private String response;
+    private int requestNumber;
+    private BufferedReader in;
 
 
     public Manager(String hostName, int portNumber) {
@@ -31,6 +34,7 @@ public class Manager extends User {
         managerResponse.execute(prompt);
         response = managerResponse.getManagerResponse();
         out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(requestNumber);
         out.println(response);
     }
 
@@ -43,7 +47,7 @@ public class Manager extends User {
     public void startManagerMenu() {
         MenuInputScanner requestMenu = new MenuInputScanner(options);
         requestMenu.setMessage("Choose a request to answer:");
-        prompt.getUserInput(requestMenu);
+        requestNumber = prompt.getUserInput(requestMenu);
 
     }
 
@@ -55,7 +59,7 @@ public class Manager extends User {
 
     @Override
     protected void read() throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 
         String msg;
@@ -68,9 +72,6 @@ public class Manager extends User {
 
 
         }
-            startManagerMenu();
-            sendResponse();
-        in.close();
     }
 
     private class MultiThread implements Runnable {
@@ -79,16 +80,21 @@ public class Manager extends User {
         public void run() {
             try {
                 socket = new Socket(hostName, portNumber);
-                    writeRequest();
+                writeRequest();
                 while (!socket.isClosed()) {
                     read();
+                    startManagerMenu();
+                    sendResponse();
 
                 }
+                in.close();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
+
+
             }
 
         }
-
     }
 }

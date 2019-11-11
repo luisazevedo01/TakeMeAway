@@ -11,6 +11,7 @@ public class Messages {
     private static final String ORANGE = "\u001b[31;1m";
     private static final String GREEN = "\u001b[32;1m";
     private static final String BRIGHT_YELLOW = "\u001b[33;1m";
+    private static final String PINK = "\u001b[35;1m";
     private static final String RESET = "\u001b[0m";
     public static final String WELCOME = YELLOW +
             "████████╗ █████╗ ██╗  ██╗███████╗███╗   ███╗███████╗ █████╗ ██╗    ██╗ █████╗ ██╗   ██╗\n" +
@@ -52,4 +53,5 @@ public class Messages {
     public static final String ADVISOR_CONFIRMATION = "Logged in as a Trip advisor, please wait for requests...";
     public static final String MISSING_INFORMATION = "You are missing some information...";
     public static final String MANAGER_RESPONSE = "Please advise the best destination to this client:";
+    public static final String GOOD_BYE_MESSAGE = PINK + "We hope that you got the best destiny!";
 }
