@@ -45,6 +45,7 @@ public class Manager extends User {
     }
 
     public void startManagerMenu() {
+
         MenuInputScanner requestMenu = new MenuInputScanner(options);
         requestMenu.setMessage("Choose a request to answer:");
         requestNumber = prompt.getUserInput(requestMenu);
@@ -61,15 +62,21 @@ public class Manager extends User {
     protected void read() throws IOException {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-
+        message = "";
         String msg;
         int counter = 0;
 
         while (counter < 10 && socket.isBound()) {
             message = in.readLine();
             options[counter] = message;
+            if (options[counter].equals(" ")) {
+                for (int i = counter + 1; i < 10; i++) {
+                    message = " ";
+                    options[i] = message;
+                }
+                break;
+            }
             counter++;
-
 
         }
     }

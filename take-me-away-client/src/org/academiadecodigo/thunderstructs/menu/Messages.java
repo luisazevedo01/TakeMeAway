@@ -52,6 +52,6 @@ public class Messages {
     public static final String WAITING_FOR_RESPONSE = BRIGHT_YELLOW + "We are analysing your information... ";
     public static final String ADVISOR_CONFIRMATION = "Logged in as a Trip advisor, please wait for requests...";
     public static final String MISSING_INFORMATION = "You are missing some information...";
-    public static final String MANAGER_RESPONSE = "Please advise the best destination to this client:";
+    public static final String MANAGER_RESPONSE = "Please advise the best destination: ";
     public static final String GOOD_BYE_MESSAGE = PINK + "We hope that you got the best destiny!";
 }
