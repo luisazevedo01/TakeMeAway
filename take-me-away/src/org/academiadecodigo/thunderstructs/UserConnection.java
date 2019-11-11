@@ -16,7 +16,6 @@ public class UserConnection implements Runnable {
     private String requestNumber;
     private PrintWriter out;
     private BufferedReader in;
-    private boolean reload;
 
     public UserConnection(Socket userSocket, Server server) {
 
@@ -47,7 +46,9 @@ public class UserConnection implements Runnable {
         sendTouristRequestToManager();
         listenToManager(in);
         broadcastFinalResponse();
-
+        if (!(server.getRequests().isEmpty())) {
+            interaction();
+        }
     }
 
     private BufferedReader openStreams() throws IOException {
@@ -76,20 +77,20 @@ public class UserConnection implements Runnable {
 
     public void broadcastFinalResponse() {
 
-            try {
+        try {
 
-                String clientKey = requestNumber;
-                Socket targetSocket = server.getClientConnections().get(Integer.parseInt(clientKey));
+            String clientKey = requestNumber;
+            Socket targetSocket = server.getClientConnects().get(Integer.parseInt(clientKey) - 1);
 
-                PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
-                out.println(response);
+            PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
+            out.println(response);
 
-                server.getRequests().remove((Integer.parseInt(requestNumber) - 1));
-                server.getClientConnections().remove(Integer.parseInt(clientKey));
+            server.getRequests().remove((Integer.parseInt(requestNumber) - 1));
+            server.getClientConnects().remove(Integer.parseInt(requestNumber) - 1);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveTouristRequest() {
@@ -99,15 +100,14 @@ public class UserConnection implements Runnable {
         }
     }
 
-    public void sendTouristRequestToManager() {
-
+    public void sendTouristRequestToManager() throws IOException {
         int counter = 0;
+        PrintWriter out = new PrintWriter(server.getManagerConnections().getFirst().getOutputStream(), true);
         while (userSocket.isBound() && counter < 10) {
 
             if (server.getRequests().isEmpty()) {
                 return;
             }
-
             if (status.equals("Manager")) {
 
                 int req = server.getRequests().size();
@@ -126,9 +126,10 @@ public class UserConnection implements Runnable {
                         out.println(" ");
                     }
                 }
-
             }
+
         }
+
     }
 
 
