@@ -1,6 +1,7 @@
 package org.academiadecodigo.thunderstructs.connections;
 
 import org.academiadecodigo.thunderstructs.menu.Display;
+import org.academiadecodigo.thunderstructs.menu.Messages;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +13,10 @@ import java.util.concurrent.Executors;
 
 public class Client extends User {
 
+    private BufferedReader in;
+
     private Display display;
+
     public Client(String hostName, int portNumber) {
         super(hostName, portNumber);
         this.display = new Display();
@@ -34,21 +38,15 @@ public class Client extends User {
 
     @Override
     protected void read() throws IOException {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        message = in.readLine();
 
-            while (!socket.isClosed()) {
-                message = in.readLine();
+        System.out.println(message);
 
-                if (message == null) {
-                    System.exit(0);
-                    return;
-                }
+        in.close();
 
-                System.out.println(message);
-
-            }
-            in.close();
+        System.out.println();
     }
 
     private class MultiThread implements Runnable {
@@ -58,12 +56,11 @@ public class Client extends User {
 
             try {
                 socket = new Socket(hostName, portNumber);
-                while (socket.isConnected()) {
-                    display.startClientMenu();
-                    writeRequest();
-                    read();
 
-                }
+                display.startClientMenu();
+                writeRequest();
+                read();
+                System.out.println(Messages.GOOD_BYE_MESSAGE);
                 socket.close();
 
 

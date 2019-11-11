@@ -12,8 +12,10 @@ public class UserConnection implements Runnable {
     private Server server;
     private String request;
     private String status;
-
+    private String response;
+    private String requestNumber;
     private PrintWriter out;
+    private BufferedReader in;
 
     public UserConnection(Socket userSocket, Server server) {
 
@@ -26,17 +28,26 @@ public class UserConnection implements Runnable {
     public void run() {
 
         try {
-            BufferedReader in = openStreams();
+            in = openStreams();
 
             while (!userSocket.isClosed()) {
 
                 listen(in);
                 saveTouristRequest();
                 server.addConnections();
-                sendTouristRequestToManager();
+                interaction();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void interaction() throws IOException {
+        sendTouristRequestToManager();
+        listenToManager(in);
+        broadcastFinalResponse();
+        if (!(server.getRequests().getFirst().equals(" "))) {
+            interaction();
         }
     }
 
@@ -45,9 +56,7 @@ public class UserConnection implements Runnable {
         return new BufferedReader(new InputStreamReader(userSocket.getInputStream()));
     }
 
-    //listens incoming messages from the tourist and manager. Criar dois métodos diferentes?
     public void listen(BufferedReader in) throws IOException {
-
         request = in.readLine();
 
         if (request.split(" ")[0].equals("Client")) {
@@ -59,30 +68,69 @@ public class UserConnection implements Runnable {
     }
 
 
+    public void listenToManager(BufferedReader in) throws IOException {
+        requestNumber = in.readLine();
+        System.out.println(requestNumber);
+        response = in.readLine();
+        System.err.println(response);
+    }
+
+    public void broadcastFinalResponse() {
+
+        try {
+
+            String clientKey = requestNumber;
+            Socket targetSocket = server.getClientConnects().get(Integer.parseInt(clientKey) - 1);
+
+            PrintWriter out = new PrintWriter(targetSocket.getOutputStream(), true);
+            out.println(response);
+
+            server.getRequests().remove((Integer.parseInt(requestNumber) - 1));
+            server.getClientConnects().remove(Integer.parseInt(requestNumber) - 1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void saveTouristRequest() {
 
         if (request.split(" ")[0].equals("Client")) {
             server.getRequests().add(request);
         }
-
-       /* for (String s : server.getRequests()) {
-            System.out.println(s);
-        }*/
     }
 
-    public void sendTouristRequestToManager() {
-        //server.getRequests().add(null);
+    public synchronized void sendTouristRequestToManager() throws IOException {
         int counter = 0;
-        while (userSocket.isBound()) {
+        int managerConnects = server.getManagerConnectionNumber();
+        PrintWriter out = new PrintWriter(server.getManagerConnections().get(managerConnects - 1).getOutputStream(), true);
+        while (userSocket.isBound() && counter < 10) {
 
-            if (server.getRequests().isEmpty()) {
+            if (server.getRequests().getFirst().equals(" ")) {
                 return;
             }
             if (status.equals("Manager")) {
-                out.println(server.getRequests().get(counter));
-                counter++;
+
+                int req = server.getRequests().size();
+
+                if (req <= 10) {
+
+                    for (int i = 0; i < req; i++) {
+
+                        out.println(server.getRequests().get(i));
+                        counter++;
+
+                    }
+                    int remain = 10 - req;
+
+                    for (int i = 0; i < remain; i++) {
+                        out.println(" ");
+                    }
+                }
             }
+
         }
+
     }
 
 

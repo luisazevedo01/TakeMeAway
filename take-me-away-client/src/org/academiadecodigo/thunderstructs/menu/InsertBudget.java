@@ -12,7 +12,7 @@ public class InsertBudget implements MenuOperation {
 
         IntegerRangeInputScanner getBudget = new IntegerRangeInputScanner(500, 5000);
 
-        getBudget.setMessage(Messages.INSERT_BUDGET);
+        getBudget.setMessage(Messages.INSERT_THE_BUDGET);
         getBudget.setError(Messages.INVALID_BUDGET);
 
         budget = prompt.getUserInput(getBudget);

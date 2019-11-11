@@ -14,9 +14,10 @@ public class Server {
     private ExecutorService service;
     private UserConnection userConnection;
 
-    private LinkedList<String> requests;
-    private Map<Integer, Socket> clientConnections;
-    private Map<Integer, Socket> managerConnections;
+    private volatile LinkedList<String> requests;
+    private LinkedList<Socket> clientConnects;
+    private LinkedList<Socket> managerConnections;
+    private List<Socket> connections;
 
     private boolean quit;
     private int clientConnectionNumber;
@@ -28,8 +29,10 @@ public class Server {
         serverSocket = new ServerSocket(port);
         service = Executors.newCachedThreadPool();
         requests = new LinkedList<>();
-        clientConnections = new HashMap<>();
-        managerConnections = new HashMap<>();
+        clientConnects = new LinkedList<>();
+        managerConnections = new LinkedList<>();
+        connections = Collections.synchronizedList(new LinkedList<>());
+
     }
 
     public void start() {
@@ -63,22 +66,35 @@ public class Server {
 
     public void addConnections() {
 
-        if (!(userConnection.getStatus().equals("Manager"))) {
-            clientConnectionNumber++;
+        if (userConnection.getStatus().equals("Tourist")) {
+            clientConnects.add(userConnection.getUserSocket());
+            connections.add(userConnection.getUserSocket());
             System.out.println("New client connection: " + userConnection.getUserSocket() + "\n" + "Connection: " + clientConnectionNumber);
-            clientConnections.put(clientConnectionNumber, userConnection.getUserSocket());
-            System.out.println("Client connections: " + clientConnections.entrySet() + "\n");
+            System.out.println("Client connection: " + clientConnects.get(clientConnectionNumber) + "\n");
+            clientConnectionNumber++;
             return;
         }
-        managerConnectionNumber++;
+        managerConnections.add(userConnection.getUserSocket());
+        connections.add(userConnection.getUserSocket());
         System.out.println("New manager connection: " + userConnection.getUserSocket() + "\n" + "Connection: " + managerConnectionNumber);
-        managerConnections.put(managerConnectionNumber, userConnection.getUserSocket());
-        System.out.println("Manager connections :" + managerConnections.entrySet() + "\n");
+        System.out.println("Manager connections : " + managerConnections.get(managerConnectionNumber) + "\n");
+        managerConnectionNumber++;
     }
 
     public LinkedList<String> getRequests() {
         return requests;
     }
 
+    public LinkedList<Socket> getManagerConnections() {
+        return managerConnections;
+    }
+
+    public LinkedList<Socket> getClientConnects() {
+        return clientConnects;
+    }
+
+    public int getManagerConnectionNumber() {
+        return managerConnectionNumber;
+    }
 }
 

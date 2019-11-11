@@ -10,27 +10,32 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Manager extends User {
     private Prompt prompt;
     private String[] options;
-    private int choosenResquest;
-    private Display display;
+    private String response;
+    private int requestNumber;
+    private BufferedReader in;
 
 
     public Manager(String hostName, int portNumber) {
         super(hostName, portNumber);
-        display = new Display();
         prompt = new Prompt(System.in, System.out);
-        options = new String[5];
+        options = new String[10];
         start();
     }
 
-    private void sendResponseStream() throws IOException {
+    private void sendResponse() throws IOException {
+        ManagerResponse managerResponse = new ManagerResponse();
+        managerResponse.execute(prompt);
+        response = managerResponse.getManagerResponse();
         out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(display.getResponse());
+        out.println(requestNumber);
+        out.println(response);
     }
 
     @Override
@@ -39,10 +44,11 @@ public class Manager extends User {
         executor.submit(new MultiThread());
     }
 
-    public void startManagerMenu() throws IOException{
+    public void startManagerMenu() {
+
         MenuInputScanner requestMenu = new MenuInputScanner(options);
         requestMenu.setMessage("Choose a request to answer:");
-        choosenResquest = prompt.getUserInput(requestMenu);
+        requestNumber = prompt.getUserInput(requestMenu);
 
     }
 
@@ -54,43 +60,25 @@ public class Manager extends User {
 
     @Override
     protected void read() throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-
+        message = "";
         String msg;
         int counter = 0;
 
-/*        while (counter < 6) {
-            System.out.println("ESTOU NO LOOP");
-            if ((msg = in.readLine()) != null) {
-                System.out.println("ENTREI NO IF");
-
-                message = msg;
-                System.out.println("LI OUTRA LINHA");
-
-                if (message == null) {
-                    System.exit(0);
-                    return;
+        while (counter < 10 && socket.isBound()) {
+            message = in.readLine();
+            options[counter] = message;
+            if (options[counter].equals(" ")) {
+                for (int i = counter + 1; i < 10; i++) {
+                    message = " ";
+                    options[i] = message;
                 }
-
-                options[counter] = message;
-                counter++;
-                continue;
+                break;
             }
-            System.out.println(message);
-            startManagerMenu();
-        }*/
-        while (counter < 6 && ((msg = in.readLine()) != null)) {
-
-            options[counter] = msg;
             counter++;
 
-            if (counter == 2) {
-                startManagerMenu();
-
-            }
         }
-        in.close();
     }
 
     private class MultiThread implements Runnable {
@@ -99,16 +87,21 @@ public class Manager extends User {
         public void run() {
             try {
                 socket = new Socket(hostName, portNumber);
+                writeRequest();
                 while (!socket.isClosed()) {
-                    writeRequest();
                     read();
+                    startManagerMenu();
+                    sendResponse();
 
                 }
+                in.close();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
+
+
             }
 
         }
-
     }
 }
