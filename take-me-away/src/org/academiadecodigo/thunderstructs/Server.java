@@ -14,7 +14,7 @@ public class Server {
     private ExecutorService service;
     private UserConnection userConnection;
 
-    private LinkedList<String> requests;
+    private volatile LinkedList<String> requests;
     private LinkedList<Socket> clientConnects;
     private LinkedList<Socket> managerConnections;
     private List<Socket> connections;
@@ -91,6 +91,10 @@ public class Server {
 
     public LinkedList<Socket> getClientConnects() {
         return clientConnects;
+    }
+
+    public int getManagerConnectionNumber() {
+        return managerConnectionNumber;
     }
 }
 

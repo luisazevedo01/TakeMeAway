@@ -46,7 +46,7 @@ public class UserConnection implements Runnable {
         sendTouristRequestToManager();
         listenToManager(in);
         broadcastFinalResponse();
-        if (!(server.getRequests().isEmpty())) {
+        if (!(server.getRequests().getFirst().equals(" "))) {
             interaction();
         }
     }
@@ -100,12 +100,13 @@ public class UserConnection implements Runnable {
         }
     }
 
-    public void sendTouristRequestToManager() throws IOException {
+    public synchronized void sendTouristRequestToManager() throws IOException {
         int counter = 0;
-        PrintWriter out = new PrintWriter(server.getManagerConnections().getFirst().getOutputStream(), true);
+        int managerConnects = server.getManagerConnectionNumber();
+        PrintWriter out = new PrintWriter(server.getManagerConnections().get(managerConnects - 1).getOutputStream(), true);
         while (userSocket.isBound() && counter < 10) {
 
-            if (server.getRequests().isEmpty()) {
+            if (server.getRequests().getFirst().equals(" ")) {
                 return;
             }
             if (status.equals("Manager")) {
